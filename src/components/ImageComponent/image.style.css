@@ -1,0 +1,14 @@
+.frontImage {
+    width:500px;
+    margin-top: 20px;
+}
+@media only screen and (max-width:768px) {
+  .frontImage {
+    width:320px;
+  }
+}
+@media only screen and (max-width:480px) {
+    .frontImage {
+        display: none;
+    }
+  }

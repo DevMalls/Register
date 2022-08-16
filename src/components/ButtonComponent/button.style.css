@@ -1,0 +1,42 @@
+
+.buttonContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.primary, .secondary {
+    border: none;
+    border-radius:5px;
+    text-align: center;
+    text-decoration: none;     
+    font-size: 16px;
+    cursor: pointer;    
+    padding: 15px;
+    font-weight: 600;
+}
+.primary {
+    background-color: #f75358;
+    color: white;
+    width: 200px;
+}
+.secondary {
+    color:#f75358;
+    background-color: white;      
+    width: 100px;
+}
+.primary:hover {
+    background-color: #ea1b21;
+    transition: 0.7s;
+}
+.secondary:hover {
+    background-color: #ea1b21;
+    color: white;
+    transition: 0.7s;
+}
+@media only screen and (max-width:480px) {
+    .primary, .secondary {
+    width: 100%;
+}
+}
