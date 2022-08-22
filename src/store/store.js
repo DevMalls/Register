@@ -1,7 +1,7 @@
 import {configureStore, combineReducers} from '@reduxjs/toolkit';
 import registerSlice from './registerSlice';
 import signInSlice from './signInSlice';
-import storageSlice from './storage';
+import storageSlice from './storageSlice';
 const rootReducer = combineReducers ({
     registerSlice,
     signInSlice,

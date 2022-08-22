@@ -1,0 +1,19 @@
+p{
+    color:black;
+    padding: 5px;
+    font-size: 20px;
+}
+.profile-image {
+    width: 300px;
+    height: auto;
+}
+.profile-data {
+    overflow-x: auto;
+    margin-top:10px;
+}
+
+@media only screen and (max-width:480px) {
+    .profile-image {
+        display: none;
+    }
+  }

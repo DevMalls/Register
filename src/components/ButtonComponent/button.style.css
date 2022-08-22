@@ -35,6 +35,9 @@
     color: white;
     transition: 0.7s;
 }
+.edit-primary {
+    width: 100%;
+}
 @media only screen and (max-width:480px) {
     .primary, .secondary {
     width: 100%;

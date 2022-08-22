@@ -1,0 +1,14 @@
+.header{
+    background-color: #f37373;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+}
+h1 {
+    color: white;
+}
+.logout {
+    color:white;
+    text-align: right;
+}

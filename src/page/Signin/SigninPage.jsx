@@ -4,10 +4,10 @@ import ImageComponent from '../../components/ImageComponent/ImageComponent';
 
 const Signup = () => {
     return (
-       <CardComponent>
-        <SigninForm/>
-       <ImageComponent/>
-       </CardComponent>      
+        <CardComponent>
+            <SigninForm/>
+            <ImageComponent/>
+        </CardComponent> 
     );
 
 }

@@ -1,87 +1,105 @@
+import { adminEmail} from '../../store/constants';
 let password = "";
+
 const isEmpty = value => value.trim() === '';
-const isEmail = value => !value.includes('@') ;
 const checkPassword = value => value.length !== 8;
+const validEmail = value =>!value.includes('@');
+const checkConfirmPassword = value => password !== value;
+export const getLocalStorage = itemName => JSON.parse(localStorage.getItem(itemName));
+export const setLocalStorageItem = (itemName, data) => localStorage.setItem(itemName, JSON.stringify(data));
+export const hasNoError = (formData) => ((Object.values(formData)).every((value)=> value.error === false ));
+
+const existEmail = (email) => {
+    const existingData = getLocalStorage("existingData");
+    let checkEmail;
+    if(email === adminEmail){
+        checkEmail = true;
+    }
+    else if(existingData !== null){
+        checkEmail = existingData.some((value) =>value.email === email)
+    }
+    else if(existingData === null){
+        checkEmail = false;
+    }
+    return checkEmail;
+}
+
 const checkBeforeDate = (value) => {
     const inputDate = new Date(value);
     const currentDate = new Date();
     return inputDate >= currentDate;
- };
+};
 
-const checkConfirmPassword = value => {
-   return password !== value;
+export const getLocalStorageSingleItem = (itemName, id) => {
+    const existingData = getLocalStorage(itemName);
+    const getSingleItem =  existingData.filter((data) => data.id === id );
+    return getSingleItem;        
 }
 
+/*  ------ Start: Update status value in local storage data ------ */
+export const updateLocalStorageItem = (id,key,value) => {
+    let existingData = getLocalStorage("existingData");
+        existingData = existingData.map((data) => {
+            if(data.id === id){
+                return {
+                    ...data,
+                    [key]: value,
+                }
+            }
+        return data;
+        })
+    setLocalStorageItem("existingData",existingData);
+}
+/*  ------ End: Update status value in local storage data ------ */
+
 export const nameChangeHandler = (value) => {
-    const payload = {
+    return {
         value : value,
         error: isEmpty(value)
     };
-    return payload;
 }
 
-export const dateChangeHandler = (value) => {
-   
-    const payload = {
+export const dateChangeHandler = (value) => {   
+    return {
         value : value,
         error: checkBeforeDate(value)
     };
-    return payload;
 }
 
-export const genderChangeHandler = (value) => {
-   
-    const payload = {
+export const genderChangeHandler = (value) => {   
+    return {
         value : value,
         error: isEmpty(value)
-    };
-    return payload;
+    }
 }
 
 export const emailChangeHandler = (value) => {
-    const payload = {
+    return {
         value : value,
-        error: isEmail(value)
+        error: existEmail(value)
     };
-    return payload;
 }
 
-export const passwordChangeHandler = (value) => {
-   
-    const payload = {
+export const userEmailChangeHandler = (value) => {
+    return {
+        value : value,
+        error: validEmail(value)
+    };
+}
+
+export const passwordChangeHandler = (value) => {     
+    password = value;  
+    return {
         value : value,
         error: checkPassword(value)
     };
-    password = value;
-    return payload;
 }
 
-export const confirmPasswordChangeHandler = (value) => {
-   
-    const payload = {
+export const confirmPasswordChangeHandler = (value) => {   
+    return {
         value : value,
         error: checkConfirmPassword(value)
     };
-    return payload;
 }
 
 
-export const register = (data) => {
-    let existingData = JSON.parse(localStorage.getItem("existingData"));
-    if(existingData === null) {
-        existingData = [];
-    }
-    let entryData = {
-        "name": data.name.value,
-        "date": data.date.value,
-        "gender": data.gender.value,
-        "email": data.email.value,
-        "password": data.password.value
-    }
-    localStorage.setItem("entryData", JSON.stringify(entryData));
-    existingData.push(entryData);
-    localStorage.setItem("existingData", JSON.stringify(existingData));
-}
-export const signin = () => {
-    console.log("SignIn");
-}

@@ -1,13 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { defaultRegisterInput } from './constants';
 
-const defaultRegisterInput = {
-    name: {value: '', error:false},    
-    date: {value: '', error:false},
-    gender: {value: '', error:false},    
-    email: {value: '', error:false},
-    password: {value: '', error:false},
-    confirmPassword: {value: '', error:false},
-};
 
 
 const registerSlice = createSlice({
@@ -37,6 +30,27 @@ const registerSlice = createSlice({
         confirmPassword(state,action){
             state.confirmPassword.value = action.payload.value;
             state.confirmPassword.error = action.payload.error;
+        },
+        key(state,action){
+            state[action.payload.key].error = action.payload.error;
+        },
+        inputClear(state,action) {
+            state.name = action.payload.name;
+            state.date = action.payload.date;
+            state.gender = action.payload.gender;
+            state.email = action.payload.email;
+            state.password = action.payload.password;
+            state.confirmPassword = action.payload.confirmPassword;
+        },
+        inputEdit(state,action){
+            state.name.value = action.payload.name;
+            state.email.value = action.payload.email;
+            state.address.value = action.payload.address;
+            state.blood.value = action.payload.blood;
+            state.center.value = action.payload.center;
+            state.gender.value = action.payload.gender;
+            state.expierence.value = action.payload.expierence;
+            state.dateOfBirth.value = action.payload.dateOfBirth;
         }
     }
 });
