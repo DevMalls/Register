@@ -4,12 +4,14 @@ import ButtonContainerComponent from "../../components/ButtonComponent/ButtonCon
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate  } from "react-router-dom";
-import {hasNoError, getLocalStorage, userEmailChangeHandler,passwordChangeHandler} from '../../utils/utilities';
+import {hasNoError, getLocalStorage, userEmailChangeHandler,passwordChangeHandler,setSessionStorage} from '../../utils/utilities';
 import { defaultSignInInput, adminEmail, adminPasword} from '../../store/constants';
 import { signInActions } from '../../store/signInSlice';
 
 const SigninForm = () => {
   const input = useSelector((state) => state.signInSlice);  
+  const storeData = useSelector((state) => state);  
+  console.log(storeData);
   const {userEmail,userPassword} = input;
   const {email,password,inputClear,error} = signInActions;
 
@@ -38,27 +40,26 @@ const registerHandler = (event) => {
     navigate('/register');
 }
 
-const checkError = () => {
-  for (var key in input) {
-    if (
-      input[key].value === "" ||
-      input[key].value.length === 0
-    ) {
-    const payload = {key, error: true };
-    dispatch(error(payload));
-    return;
-    }
-  }
-}
 const signinHandler = (event) => {
     event.preventDefault();  
+    setSessionStorage('loginUser','{loginStatus: true}' );
     if(userEmail.value === adminEmail && userPassword.value === adminPasword){
             dispatch(inputClear(defaultSignInInput));
+            console.log(sessionStorage.getItem('loginUser'));
             navigate('/welcome',{state:{userType:'admin'}});
             return;
     }
     else {
-            checkError();
+          for (var key in input) {
+            if (
+              input[key].value === "" ||
+              input[key].value.length === 0
+            ) {
+            const payload = {key, error: true };
+            dispatch(error(payload));
+            return true;
+            }
+          }
 
             if(hasNoError(input)) {
                 let existingData = getLocalStorage("existingData");

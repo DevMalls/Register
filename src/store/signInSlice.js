@@ -13,7 +13,7 @@ const signInSlice = createSlice({
             state.userPassword.value = action.payload.value;
             state.userPassword.error = action.payload.error;
         },
-        key(state,action){
+        error(state,action){
             state[action.payload.key].error = action.payload.error;
         },
         inputClear(state,action) {

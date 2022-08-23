@@ -1,16 +1,20 @@
 import CardComponent from '../CardComponent/CardComponent';
 import TableHeaderComponent from './TableHeaderComponent';
 import TableBodyComponent from './TableBodyComponent';
-import { updateLocalStorageItem, getLocalStorageSingleItem} from '../../utils/utilities';
-import { useEffect, useState } from 'react';
-import './table.style.css';
 import RegisterForm from '../../page/Register/RegisterForm';
+import { updateStatusLocalStorageItem, getLocalStorageSingleItem} from '../../utils/utilities';
+import { useEffect, useState } from 'react';
+import { useDispatch } from "react-redux";
+import { storeActions } from '../../store/storageSlice';
+import './table.style.css';
 
 const TableComponent = () => {
     
     const [actionType, setActionType] = useState('');
     const [showForm, setShowForm] = useState(false);
     const [userData, setUserData] = useState('');
+    const dispatch = useDispatch();
+    const {updateStatus} = storeActions;
     
     useEffect( ()=>{
     },[actionType]);
@@ -19,7 +23,6 @@ const TableComponent = () => {
         setActionType('Edited');
         setShowForm(true);
         setUserData(getLocalStorageSingleItem("existingData",id));
-        console.log(userData);
     }
 
     const closeForm = () =>{
@@ -28,12 +31,22 @@ const TableComponent = () => {
 
     const deleteClick = (id) => {
         setActionType('Deleted');
-       updateLocalStorageItem(id,'status','Deleted');
+        const payload = {
+            'id' : id,
+            'status' : 'Deleted'
+        }
+        dispatch(updateStatus(payload));
+        updateStatusLocalStorageItem(payload.id,'status',payload.status);
     }
 
     const addClick = (id) => {
         setActionType('Added');
-       updateLocalStorageItem(id,'status','Added');
+        const payload = {
+            'id' : id,
+            'status' : 'Added'
+        }
+        dispatch(updateStatus(payload));
+        updateStatusLocalStorageItem(payload.id,'status',payload.status);
     }
 
     return (        

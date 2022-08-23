@@ -3,74 +3,82 @@ import ButtonContainerComponent from "../../components/ButtonComponent/ButtonCon
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 import ErrorComponent from "../../components/ErrorComponent/ErrorComponent";
 import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerActions } from '../../store/registerSlice';
+import { storeActions } from '../../store/storageSlice';
 import { defaultRegisterInput } from '../../store/constants';
-import { hasNoError, getLocalStorage, setLocalStorageItem, passwordChangeHandler, confirmPasswordChangeHandler,
-nameChangeHandler, dateChangeHandler, genderChangeHandler, emailChangeHandler} from '../../utils/utilities';
-import * as utilities from '../../utils/utilities';
-//import { useParams } from 'react-router-dom';
-
+import { hasNoError, getLocalStorage, setLocalStorageItem, updateSingleItem, passwordChangeHandler, confirmPasswordChangeHandler,
+nameChangeHandler, dateChangeHandler, genderChangeHandler, emailChangeHandler, isEmptyObject} from '../../utils/utilities';
 const listOfGenders = ['Female', 'Male'];
 
 const RegisterForm = (props) => {
 
   const input = useSelector((state) => state.registerSlice);
-  const {name,date,gender,email,password,confirmPassword} = registerActions;
+  const {name,date,gender,email,password,confirmPassword} = input;
+  const {storeData,updateSpecificItem} = storeActions;
+  const {nameAction,dateAction,genderAction,emailAction,passwordAction,confirmPasswordAction,error,inputClear,inputEdit} = registerActions;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   let payload;
-  //let  {id}  = useParams();
-  //console.log(id);
-  // console.log(getLocalStorageSingleItem("existingData",id));
+
+  useEffect(() => {
+    (!(isEmptyObject(props)))
+      ? fetchData()
+      : dispatch(inputClear(defaultRegisterInput));
+  }, [props.userData]);
+
+  const fetchData = () => {
+    dispatch(inputEdit(props.userData));
+  }
 
   const inputChange = (event) => {
     switch (event.target.name) {
       case "name":
         payload = nameChangeHandler(event.target.value);
-        dispatch(name(payload));
+        dispatch(nameAction(payload));
         break;
       case "date":
         payload = dateChangeHandler(event.target.value);
-        dispatch(date(payload));
+        dispatch(dateAction(payload));
         break;
       case "gender":
         payload = genderChangeHandler(event.target.value);
-        dispatch(gender(payload));
+        dispatch(genderAction(payload));
         break;
       case "email":
         payload = emailChangeHandler(event.target.value);
-        dispatch(email(payload));
+        dispatch(emailAction(payload));
         break;
       case "password":
         payload = passwordChangeHandler(event.target.value);
-        dispatch(password(payload));
+        dispatch(passwordAction(payload));
         break;
       case "confirmPassword":
         payload = confirmPasswordChangeHandler(event.target.value);
-        dispatch(confirmPassword(payload));
+        dispatch(confirmPasswordAction(payload));
         break;
       default:
         return '';
     }
   }
 
-  const checkError = () => {
-    for (var key in input) {
-      if (
-        input[key].value === "" ||
-        input[key].value.length === 0
-      ) {
-      const payload = {key, error: true };
-      dispatch(error(payload));
-      return;
-      }
-    }
-  }
 
   const registerHandler = (event) => {
     event.preventDefault();
-    checkError();
+    
+    for (var key in input) {
+      if (
+        input[key].value === "" ||
+        input[key].value.length === 0  
+      ) {
+      const payload = {key, error: true };
+      dispatch(error(payload));
+      return true;
+      }
+    }
+
+    //confirmPasswordChangeHandler(password.value,confirmPassword.value);
 
     if (hasNoError(input)) {
       let existingData = getLocalStorage("existingData");
@@ -78,31 +86,47 @@ const RegisterForm = (props) => {
         existingData = [];
       }
       let entryData = {
-        "id": existingData.length + 1,
-        "name": input.name.value,
-        "date": input.date.value,
-        "gender": input.gender.value,
-        "email": input.email.value,
-        "password": window.btoa(input.password.value),
+        "name": name.value,
+        "date": date.value,
+        "gender": gender.value,
+        "email": email.value,
+        "password": window.btoa(password.value),
         "status": "Added",
       }
-      setLocalStorageItem("entryData", entryData);
-      existingData.push(entryData);
-      setLocalStorageItem("existingData", existingData);
-      dispatch(registerActions.inputClear(defaultRegisterInput));
-      navigate('/')
+
+      if(!(isEmptyObject(props))) {
+          entryData = {
+            ...entryData,
+            "id": props.userData.id,         
+        }
+        setLocalStorageItem("entryData", entryData);
+        dispatch(updateSpecificItem({id : props.userData.id,updatedData: entryData }));
+        updateSingleItem(props.userData.id,entryData);       
+        dispatch(inputClear(defaultRegisterInput));
+        props.closeForm();
+      } 
+      else {
+        entryData = {
+          ...entryData,
+          "id": existingData.length + 1,
+        }        
+        setLocalStorageItem("entryData", entryData);
+        existingData.push(entryData);
+        dispatch(storeData(entryData));
+        setLocalStorageItem("existingData", existingData);
+        dispatch(inputClear(defaultRegisterInput));
+        navigate('/')
+      } 
+
     }
   }
 
   const signinHandler = (event) => {
     event.preventDefault();
-    dispatch(registerActions.inputClear(defaultRegisterInput));
+    dispatch(inputClear(defaultRegisterInput));
     navigate('/');
   }
 
-  const editHandler = (event) => {
-
-  }
 
   return (
     <div className="form">
@@ -111,19 +135,19 @@ const RegisterForm = (props) => {
       <InputComponent name="name"
         type="text"
         placeholder="Name"
-        value={input.name.value}
+        value={name.value}
         inputChange={inputChange} />
-      {input.name.error && (
+      {name.error && (
         <ErrorComponent message="Name must not be empty" />
       )}
 
       <InputComponent name="date"
         type="date"
         placeholder="Date"
-        value={input.date.value}
+        value={date.value}
         inputChange={inputChange}
       />
-      {input.date.error && (
+      {date.error && (
         <ErrorComponent message="Date must be before today"/>
       )}
 
@@ -137,30 +161,30 @@ const RegisterForm = (props) => {
       <InputComponent name="email"
         type="email"
         placeholder="Email"
-        value={input.email.value}
+        value={email.value}
         inputChange={inputChange}
       />
-      {input.email.error && (
+      {email.error && (
         <ErrorComponent message="Emai is already exists" />
       )}
 
       <InputComponent name="password"
         type="password"
         placeholder="Password"
-        value={input.password.value}
+        value={password.value}
         inputChange={inputChange}
       />
-      {input.password.error && (
+      {password.error && (
         <ErrorComponent message="Password must contains 8 characters" />
       )}
 
       <InputComponent name="confirmPassword"
         type="password"
         placeholder="Confirm Password"
-        value={input.confirmPassword.value}
+        value={confirmPassword.value}
         inputChange={inputChange}
       />
-      {input.confirmPassword.error && (
+      {confirmPassword.error && (
         <ErrorComponent message="Password not matched" />
       )}
 
@@ -168,7 +192,7 @@ const RegisterForm = (props) => {
         {props.buttonValue === "Edit" ?
           <ButtonComponent className="primary edit-primary"
             value={props.buttonValue}
-            onClick={editHandler} />
+            onClick={registerHandler} />
           :
           <ButtonComponent className="primary"
             value="Register"

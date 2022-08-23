@@ -31,4 +31,5 @@ tbody{
 }
 .close{
   float: right;
+  cursor: pointer;
 }

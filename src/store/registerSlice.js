@@ -7,31 +7,31 @@ const registerSlice = createSlice({
     name: "input",
     initialState: defaultRegisterInput,
     reducers: {
-        name(state,action){
+        nameAction(state,action){
             state.name.value = action.payload.value;
             state.name.error = action.payload.error;
         },
-        date(state,action){
+        dateAction(state,action){
             state.date.value = action.payload.value;
             state.date.error = action.payload.error;
         },
-        gender(state,action){
+        genderAction(state,action){
             state.gender.value = action.payload.value;
             state.gender.error = action.payload.error;
         },
-        email(state,action){
+        emailAction(state,action){
             state.email.value = action.payload.value;
             state.email.error = action.payload.error;
         },
-        password(state,action){
+        passwordAction(state,action){
             state.password.value = action.payload.value;
             state.password.error = action.payload.error;
         },
-        confirmPassword(state,action){
+        confirmPasswordAction(state,action){
             state.confirmPassword.value = action.payload.value;
             state.confirmPassword.error = action.payload.error;
         },
-        key(state,action){
+        error(state,action){
             state[action.payload.key].error = action.payload.error;
         },
         inputClear(state,action) {
@@ -44,13 +44,11 @@ const registerSlice = createSlice({
         },
         inputEdit(state,action){
             state.name.value = action.payload.name;
-            state.email.value = action.payload.email;
-            state.address.value = action.payload.address;
-            state.blood.value = action.payload.blood;
-            state.center.value = action.payload.center;
+            state.date.value = action.payload.date;
             state.gender.value = action.payload.gender;
-            state.expierence.value = action.payload.expierence;
-            state.dateOfBirth.value = action.payload.dateOfBirth;
+            state.email.value = action.payload.email;
+            state.password.value = action.payload.password;
+            state.confirmPassword.value = action.payload.confirmPassword;
         }
     }
 });

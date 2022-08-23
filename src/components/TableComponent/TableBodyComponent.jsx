@@ -1,15 +1,21 @@
 import {ReactComponent as EditSvg} from '../../assests/edit.svg';
 import {ReactComponent as DeleteSvg} from '../../assests/delete.svg';
 import {ReactComponent as AddSvg} from '../../assests/add.svg';
-import { getLocalStorage} from '../../utils/utilities';
+import { useSelector } from 'react-redux/es/exports';
 import './table.style.css';
+import { useEffect } from 'react';
 
 
 const TableBodyComponent = (props) => {       
-    const tableData = getLocalStorage("existingData");
+    let tableData = useSelector((state) => state.storageSlice.data); 
+    console.log(tableData);
+   useEffect(() => {
+
+   },[tableData]);
+    //const tableData = getLocalStorage("existingData");
 
     const getTableRowData =  () =>{
-        if(tableData !== null){
+        if(tableData.length > 0){
            const showTableData = (tableData.map((data,index) => {
                 const statusClass = data.status === "Added" ? "add-status" : "delete-status";
                 return  (<tr key={index+1}>
